@@ -1,14 +1,19 @@
 name: Workflow Demo
 on:
+  push:
   workflow_dispatch:
   #schedule:
    # - cron: "*/1 * * * *"   
-env:
-  ACCESS_ID: ${{ vars.ACCESS_ID }}
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Echo ACCESS_ID
-      run: echo $ACCESS_ID
-      timeout-minutes: 1
+  deploy:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        images: [hello-world, alpine]
+      runs-on: ${{ matrix.os }}
+      steps:
+      - name: Echo docker details
+        run: docker info
+
+      - name: Run images on ${{ matrix.os }}
+        run: docker run ${{ matrix.images }}
